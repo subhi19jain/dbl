@@ -1,0 +1,134 @@
+ASSIGNMENT 4 
+
+
+PART A – FINE CALCULATION
+
+mysql> USE fines
+
+mysql> CREATE TABLE BORROWER (
+     Rollin INT PRIMARY KEY ,
+     Name VARCHAR(50),
+     DateofIssue DATE ,
+     Name_of_book VARCHAR (100), 
+     Status CHAR(1));
+Query OK, 0 rows affected (0.21 sec)
+mysql> CREATE TABLE FINE( 
+Rollno INT , 
+Date DATE, 
+Amt DECIMAL(10,2)
+CONSTRAINT fk_borrower_rollno FOREIGN KEY (Rollno) REFERENCES BORROWER (Rollin));
+Query OK, 0 rows affected (0.23 sec)
+
+mysql>  DELIMITER //
+mysql> CREATE PROCEDURE return_book_fine_calculate (
+     IN in_roll_no INT ,
+     IN in_book_name VARCHAR(100)
+     )
+     BEGIN 
+     DECLARE 
+     v_issue_date DATE;
+     DECLARE v_days INT;
+     DECLARE v_fine_amt DECIMAL(10,2) DEFAULT 0;
+     DECLARE v_status CHAR(1);
+     DECLARE EXIT HANDLER FOR NOT FOUND
+     BEGIN
+     SELECT 'Error : Borrower record not found .' AS message;
+     END;
+     SELECT DateofIssue , Status INTO v_issue_date , v_status 
+     FROM BORROWER
+     WHERE Rollin = in_roll_no AND Name_of_book = in_book_name;
+     SET v_days = DATEDIFF(CURDATE(), v_issue_date);
+     IF v_days > 30 THEN 
+     SET v_fine_amt = v_days * 50 ;
+     ELSEIF v_days >= 15 AND v_days <= 30 THEN
+     SET v_fine_amt = v_days * 5;
+     ELSE 
+     SET v_fine_amt = 0;
+     END IF ;
+     IF v_status = 'I' THEN 
+     UPDATE BORROWER 
+     SET Status = 'R'
+     WHERE Rollin = in_roll_no AND Name_of_book = in_book_name;
+     END IF;
+     IF v_fine_amt > 0 THEN 
+     INSERT INTO FINE(Rollno , Date , Amt )
+     VALUES ( in_roll_no, CURDATE() , v_fine_amt);
+     END IF; 
+     END;
+     //
+
+
+mysql> CALL return_book_fine_calculate(101, 'Oracle Basics');
+
+
+PART B- CALCULATE AREA OF CIRCLE 
+
+mysql> USE student_it;
+Database changed
+mysql> CREATE TABLE AREAS(
+     radius INT (5),
+     area DECIMAL (10,2));
+Query OK, 0 rows affected (0.23 sec)
+
+mysql> DELIMITER // 
+mysql> CREATE PROCEDURE calculate_area_circle()
+     BEGIN
+     DECLARE r INT DEFAULT 5 ;
+     DECLARE a DECIMAL(10,2);
+     WHILE r <= 9 DO
+     SET a = PI() * r * r;
+     INSERT INTO AREAS (radius, area)
+     VALUES (r,a);
+     SET r= r+1;
+     END WHILE ;
+     END;
+     //
+Query OK, 0 rows affected (0.03 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+mysql> SELECT * FROM BORROWER;
++--------+---------+-------------+-----------------+--------+
+| Rollin | Name    | DateofIssue | Name_of_book    | Status |
++--------+---------+-------------+-----------------+--------+
+|    101 | Alice   | 2025-06-01  | Oracle Basics   | R      |
+|    102 | Bob     | 2025-06-10  | PL/SQL Guide    | I      |
+|    103 | Charlie | 2025-07-01  | Data Structures | I      |
++--------+---------+-------------+-----------------+--------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM FINE;
++--------+------------+---------+
+| Rollno | Date       | Amt     |
++--------+------------+---------+
+|    101 | 2025-07-24 | 2650.00 |
++--------+------------+---------+
+1 row in set (0.00 sec)
+
+
+mysql> CALL calculate_area_circle();
+       SELECT * FROM AREAS;
+      //
+Query OK, 1 row affected (0.23 sec)
++--------+--------+
+| radius | area   |
++--------+--------+
+|      5 |  78.54 |
+|      6 | 113.10 |
+|      7 | 153.94 |
+|      8 | 201.06 |
+|      9 | 254.47 |
++--------+--------+
+5 rows in set (0.23 sec)
