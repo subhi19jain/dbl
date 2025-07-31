@@ -1,0 +1,160 @@
+mysql> use student_ass6;
+Database changed
+mysql> CREATE TABLE stud_marks(
+    roll_no INT PRIMARY KEY ,
+    name VARCHAR(50), 
+    total_marks INT );
+
+mysql> CREATE TABLE Result(
+    roll_no INT PRIMARY KEY ,
+    name VARCHAR(50),
+    class VARCHAR(30));
+
+mysql> INSERT INTO stud_marks 
+     VALUES (1,'Anuj',1200),(2,'Bobby',950),(3,'Cathy',880),
+     (4,'Dhruv',800),(5,'Tanush',1000);
+
+mysql> DELIMITER //
+mysql> CREATE FUNCTION get_grade(p_total_marks INT) RETURNS VARCHAR(30)
+     BEGIN
+     DECLARE v_class VARCHAR(30);
+     
+       
+         IF p_total_marks < 0 THEN
+             RETURN 'ERROR: Negative marks not allowed';
+         END IF;
+     
+     
+         IF p_total_marks > 1500 THEN
+             RETURN 'ERROR: Marks exceed maximum limit';
+         END IF;
+     
+         IF p_total_marks BETWEEN 990 AND 1500 THEN 
+             SET v_class = 'DISTINCTION';
+         ELSEIF p_total_marks BETWEEN 900 AND 989 THEN 
+             SET v_class = 'FIRST CLASS';
+         ELSEIF p_total_marks BETWEEN 825 AND 899 THEN 
+             SET v_class = 'HIGHER SECOND CLASS';
+         ELSE 
+             SET v_class = 'NO CLASS';
+         END IF;
+     
+         RETURN v_class;
+     END;
+     //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE PROCEDURE proc_grade(
+     IN p_roll INT ,
+     IN p_name VARCHAR(50),
+     IN p_total_marks INT)
+     BEGIN
+     DECLARE v_class VARCHAR(30);
+     SET v_class = get_grade(p_total_marks);
+     INSERT INTO Result(roll_no, name, class)
+     VALUES (p_roll, p_name, v_class);
+     END;
+     //
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE Grade_All_Students()
+     BEGIN
+     DECLARE done INT DEFAULT FALSE;
+     DECLARE v_roll INT ;
+     DECLARE v_name VARCHAR(50);
+     DECLARE v_total_marks INT; 
+     DECLARE cur CURSOR FOR SELECT roll_no , name , total_marks FROM stud_marks;
+     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+     OPEN cur;
+     read_loop : LOOP
+     FETCH cur INTO v_roll, v_name, v_total_marks;
+     IF done THEN 
+     LEAVE read_loop;
+     END IF ;
+     CALL proc_grade(v_roll, v_name, v_total_marks);
+     END LOOP;
+     CLOSE cur;
+     END;
+     //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CALL Grade_All_Students();
+     //
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+mysql> SELECT * FROM stud_marks;
++---------+--------+-------------+
+| roll_no | name   | total_marks |
++---------+--------+-------------+
+|       1 | Anuj   |        1200 |
+|       2 | Bobby  |         950 |
+|       3 | Cathy  |         880 |
+|       4 | Dhruv  |         800 |
+|       5 | Tanush |        1000 |
++---------+--------+-------------+
+5 rows in set (0.01 sec)
+
+
+mysql> SELECT* FROM Result;
+      //
++---------+--------+---------------------+
+| roll_no | name   | class               |
++---------+--------+---------------------+
+|       1 | Anuj   | DISTINCTION         |
+|       2 | Bobby  | FIRST CLASS         |
+|       3 | Cathy  | HIGHER SECOND CLASS |
+|       4 | Dhruv  | NO CLASS            |
+|       5 | Tanush | DISTINCTION         |
++---------+--------+---------------------+
+5 rows in set (0.00 sec)
+
