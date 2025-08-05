@@ -1,0 +1,104 @@
+DROP TABLE IF EXISTS Stud_Marks;
+DROP TABLE IF EXISTS Result;
+------------
+CREATE TABLE Stud_Marks (
+  RollNo INT PRIMARY KEY,
+  Name VARCHAR(50),
+  Total_Marks INT
+);
+------------
+CREATE TABLE Result (
+  Roll INT,
+  Name VARCHAR(50),
+  Class VARCHAR(30)
+);
+
+-- Insert sample data including edge cases
+INSERT INTO Stud_Marks VALUES 
+(1, 'Alice', 995),       
+(2, 'Bob', 920),         
+(3, 'Charlie', 870),     
+(4, 'Diana', 800),      
+(5, 'Evan', 1501),      
+(6, 'Fiona', -50);       
+
+-----------
+DELIMITER //
+
+CREATE FUNCTION comp_Grade(marks INT)
+RETURNS VARCHAR(30)
+DETERMINISTIC
+BEGIN
+  DECLARE grade VARCHAR(30);
+
+  IF marks < 0 OR marks > 1500 THEN
+    SET grade = 'Invalid Marks';
+  ELSEIF marks >= 990 THEN
+    SET grade = 'Distinction';
+  ELSEIF marks BETWEEN 900 AND 989 THEN
+    SET grade = 'First Class';
+  ELSEIF marks BETWEEN 825 AND 899 THEN
+    SET grade = 'Higher Second Class';
+  ELSE
+    SET grade = 'No Class';
+  END IF;
+
+  RETURN grade;
+END;
+//
+--------------
+
+DELIMITER //
+
+CREATE PROCEDURE proc_Grade()
+BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE v_Roll INT;
+  DECLARE v_Name VARCHAR(50);
+  DECLARE v_Marks INT;
+  DECLARE v_Class VARCHAR(30);
+
+  DECLARE cur CURSOR FOR SELECT RollNo, Name, Total_Marks FROM Stud_Marks;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+  OPEN cur;
+
+  read_loop: LOOP
+    FETCH cur INTO v_Roll, v_Name, v_Marks;
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+
+    SET v_Class = comp_Grade(v_Marks);
+
+    INSERT INTO Result (Roll, Name, Class)
+    VALUES (v_Roll, v_Name, v_Class);
+  END LOOP;
+
+  CLOSE cur;
+END;
+//
+-----------
+CALL proc_Grade();
+---------
+SELECT * FROM Result;
+-------------
+
+
+
+
+
+
+
+--NO USE OUTPUT 
+| Roll | Name    | Class               |
+| ---- | ------- | ------------------- |
+| 1    | Alice   | Distinction         |
+| 2    | Bob     | First Class         |
+| 3    | Charlie | Higher Second Class |
+| 4    | Diana   | No Class            |
+| 5    | Evan    | Invalid Marks       |
+| 6    | Fiona   | Invalid Marks       |
+
+
+
