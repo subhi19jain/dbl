@@ -1,0 +1,162 @@
+CREATE TABLE N_RollCall (
+  RollNo INT PRIMARY KEY,
+  Name VARCHAR(50),
+  Branch VARCHAR(30),
+  Year INT,
+  Attendance_Percentage DECIMAL(5,2),
+  Event VARCHAR(50)
+);
+-----------------
+CREATE TABLE O_RollCall (
+  RollNo INT PRIMARY KEY,
+  Name VARCHAR(50),
+  Branch VARCHAR(30),
+  Year INT,
+  Attendance_Percentage DECIMAL(5,2),
+  Event VARCHAR(50)
+);
+
+------------------
+INSERT INTO N_RollCall VALUES
+(1, 'Alice', 'Computer', 3, 55.00, 'Cultural'),
+(2, 'Bob', 'Mechanical', 2, 65.50, 'Sports'),
+(3, 'Charlie', 'Computer', 1, 72.00, 'Cultural'),
+(4, 'Diana', 'Electrical', 4, 45.00, 'Cultural'),
+(5, 'Evan', 'Computer', 2, 80.00, NULL);
+-------------
+INSERT INTO O_RollCall VALUES
+(1, 'Alice', 'Computer', 3, 55.00, 'Cultural'),
+(2, 'Bob', 'Mechanical', 2, 65.50, 'Sports'),
+(6, 'Frank', 'Civil', 3, 60.00, 'Sports');
+
+
+
+--1. Implicit cursor equivalent: Update attendance of students in cultural events by 20% and count rows updated
+-------------
+DELIMITER //
+CREATE PROCEDURE UpdateCulturalAttendance()
+BEGIN
+    UPDATE N_RollCall
+    SET Attendance_Percentage = Attendance_Percentage * 1.2
+    WHERE Event = 'Cultural';
+
+    SELECT ROW_COUNT() AS Rows_Updated;
+END;
+//
+----------------------
+CALL UpdateCulturalAttendance();
+//
+
+--2. Explicit Cursor: Display student details from Computer department
+
+
+DELIMITER //
+CREATE PROCEDURE DisplayComputerStudents()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE v_RollNo INT;
+    DECLARE v_Name VARCHAR(50);
+    DECLARE v_Branch VARCHAR(30);
+    DECLARE v_Year INT;
+    DECLARE v_Attendance DECIMAL(5,2);
+    DECLARE v_Event VARCHAR(50);
+
+    DECLARE cur CURSOR FOR SELECT RollNo, Name, Branch, Year, Attendance_Percentage, Event FROM N_RollCall WHERE Branch = 'Computer';
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO v_RollNo, v_Name, v_Branch, v_Year, v_Attendance, v_Event;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        SELECT v_RollNo AS RollNo, v_Name AS Name, v_Branch AS Branch, v_Year AS Year, v_Attendance AS Attendance_Percentage, v_Event AS Event;
+    END LOOP;
+
+    CLOSE cur;
+    END;
+   //
+--------------
+CALL DisplayComputerStudents();
+//
+
+
+--3. Write a PL/SQL block to show student detail having attendance greater than 60% (Cursor FOR)
+
+    DELIMITER //
+   CREATE PROCEDURE ShowHighAttendance()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE v_RollNo INT;
+    DECLARE v_Name VARCHAR(50);
+    DECLARE v_Branch VARCHAR(30);
+    DECLARE v_Year INT;
+    DECLARE v_Attendance DECIMAL(5,2);
+    DECLARE v_Event VARCHAR(50);
+
+    DECLARE cur CURSOR FOR SELECT RollNo, Name, Branch, Year, Attendance_Percentage, Event FROM N_RollCall WHERE Attendance_Percentage > 60;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO v_RollNo, v_Name, v_Branch, v_Year, v_Attendance, v_Event;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        SELECT v_RollNo AS RollNo, v_Name AS Name, v_Branch AS Branch, v_Year AS Year, v_Attendance AS Attendance_Percentage, v_Event AS Event;
+    END LOOP;
+
+    CLOSE cur;
+    END;
+    //
+------------------------
+CALL ShowHighAttendance();
+//
+
+--4.Parameterized Cursor: Merge data from N_RollCall into O_RollCall skipping duplicates by Year
+
+DELIMITER //
+CREATE PROCEDURE MergeRollCallByYear(IN input_year INT)
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE v_RollNo INT;
+    DECLARE v_Name VARCHAR(50);
+    DECLARE v_Branch VARCHAR(30);
+    DECLARE v_Year INT;
+    DECLARE v_Attendance DECIMAL(5,2);
+    DECLARE v_Event VARCHAR(50);
+
+    DECLARE cur CURSOR FOR 
+        SELECT RollNo, Name, Branch, Year, Attendance_Percentage, Event FROM N_RollCall WHERE Year = input_year;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO v_RollNo, v_Name, v_Branch, v_Year, v_Attendance, v_Event;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        IF NOT EXISTS (SELECT 1 FROM O_RollCall WHERE RollNo = v_RollNo) THEN
+            INSERT INTO O_RollCall (RollNo, Name, Branch, Year, Attendance_Percentage, Event)
+            VALUES (v_RollNo, v_Name, v_Branch, v_Year, v_Attendance, v_Event);
+        END IF;
+    END LOOP;
+
+    CLOSE cur;
+
+    SELECT 'Merge Completed' AS Message;
+END;
+//
+
+-----------------
+CALL MergeRollCallByYear(2);
+//
+---------------
+SELECT * FROM O_RollCall ORDER BY RollNo;
+//
+
