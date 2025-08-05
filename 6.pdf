@@ -1,0 +1,81 @@
+mysql> USE ASSIG_ROLL;
+Database changed
+mysql> CREATE TABLE O_RollCall(
+     student_id INT PRIMARY KEY ,
+     student_name VARCHAR(100),
+     attendance_date DATE);
+
+mysql> CREATE TABLE N_RollCall(
+     student_id INT,
+     student_name VARCHAR(100),
+     attendance_date DATE);
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE MergeRollCall(IN input_date DATE)
+       BEGIN
+       DECLARE v_student_id INT;
+       DECLARE v_student_name VARCHAR(100);
+       DECLARE v_attendance_date DATE;
+       DECLARE done INT DEFAULT 0;
+    
+       DECLARE cur CURSOR FOR
+          SELECT student_id, student_name, attendance_date
+          FROM N_RollCall
+          WHERE attendance_date = input_date;
+     
+       DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+    
+       OPEN cur;
+    
+       read_loop: LOOP
+       FETCH cur INTO v_student_id, v_student_name, v_attendance_date;
+     
+       IF done = 1 THEN
+           LEAVE read_loop;
+       END IF;
+    
+       IF NOT EXISTS (
+          SELECT 1 FROM O_RollCall
+          WHERE student_id = v_student_id
+          AND attendance_date = v_attendance_date) 
+       THEN
+         INSERT INTO O_RollCall (student_id,student_name,attendance_date)
+         VALUES (v_student_id, v_student_name, v_attendance_date);
+       END IF;
+    
+       END LOOP;
+     
+       CLOSE cur;
+       END ;
+       //
+
+mysql> INSERT INTO O_RollCall VALUES
+      (1, 'Alice', '2025-08-05'),
+      (2, 'Bob', '2025-08-05');
+      //
+
+mysql> INSERT INTO N_RollCall VALUES 
+      (2,'Bob','2025-08-05'),
+      (3,'Charvi','2025-08-05'),
+      (4,'Dhriti','2025-08-05');
+      //
+
+mysql> CALL MergeRollCall('2025-08-05');
+       //
+
+
+
+
+mysql> SELECT * FROM O_RollCall ORDER BY student_id;
+       //
++------------+--------------+-----------------+
+| student_id | student_name | attendance_date |
++------------+--------------+-----------------+
+|          1 | Alice        | 2025-08-05      |
+|          2 | Bob          | 2025-08-05      |
+|          3 | Charvi       | 2025-08-05      |
+|          4 | Dhriti       | 2025-08-05      |
++------------+--------------+-----------------+
+4 rows in set (0.00 sec)
+
+
