@@ -1,0 +1,82 @@
+mysql> CREATE DATABASE ASSI_TRIGGER;
+
+
+mysql> USE ASSI_TRIGGER;
+
+mysql> CREATE TABLE LIBRARY (
+       BookNO INT PRIMARY KEY,
+       Name VARCHAR(100),
+       Author VARCHAR(100),
+       Publication VARCHAR(100),
+       Year INT);
+
+
+mysql> CREATE TABLE Library_Audit( BookNO INT, Name VARCHAR(100), Author VARCHAR(100), Publication VARCHAR(100),
+      Year INT,
+      ActionType VARCHAR(20),
+      ActionTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+
+
+--UPDATE ON TRIGGER 
+
+mysql> DELIMITER //
+mysql> CREATE TRIGGER trg_lib_before_update
+       BEFORE UPDATE ON LIBRARY 
+       FOR EACH ROW
+       BEGIN
+       INSERT INTO Library_Audit(BookNO, Name ,Author,Publication,Year,ActionType)
+       VALUES (OLD.BookNo, OLD.Name, OLD.Author, OLD.Publication, OLD.Year, 'UPDATE');
+       END;
+       //
+
+--DELETE ON TRIGGER 
+
+mysql> DELIMITER //
+mysql> CREATE TRIGGER trg_library_after_delete  
+       AFTER DELETE ON LIBRARY  
+       FOR EACH ROW  BEGIN INSERT INTO Library_Audit ( BookNO, Name , Author , Publication , Year , ActionType)
+       VALUES (OLD.BookNO,OLD.Name, OLD.Author, OLD.Publication , OLD.Year,'DELETE');
+       END;
+       //
+
+mysql> INSERT INTO LIBRARY (BookNO, Name, Author, Publication, Year)
+     VALUES (1, '1984', 'G.Orwell', 'Secker & Warburg', 1949),
+     (2, 'To Kill a Mockingbird', 'Harper Lee', 'J.B. Lippincott & Co.', 1960);//
+
+mysql>UPDATE LIBRARY 
+      SET Author = 'G.O.'
+      WHERE BookNO = 1;//
+
+
+mysql>DELETE FROM Library
+      WHERE BookID = 2;//
+
+
+
+
+
+
+
+
+
+
+
+mysql>SELECT * FROM Library_Audit;//
++--------+------+----------+------------------+------+------------+---------------------+
+| BookNO | Name | Author   | Publication      | Year | ActionType | ActionTime          |
++--------+------+----------+------------------+------+------------+---------------------+
+|      1 | 1984 | G.Orwell | Secker & Warburg | 1949 | UPDATE     | 2025-08-28 18:07:44 |
++--------+------+----------+------------------+------+------------+-------------
+
+mysql>SELECT * FROM Library_Audit;//
++--------+-----------------------+------------+-----------------------+------+------------+---------------------+
+| BookNO | Name                  | Author     | Publication           | Year | ActionType | ActionTime          |
++--------+-----------------------+------------+-----------------------+------+------------+---------------------+
+|      1 | 1984                  | G.Orwell   | Secker & Warburg      | 1949 | UPDATE     | 2025-08-28 18:07:44 |
+|      2 | To Kill a Mockingbird | Harper Lee | J.B. Lippincott & Co. | 1960 | DELETE     | 2025-08-28 18:10:27 |
++--------+-----------------------+------------+-----------------------+------+------------+---------------------+
+
+
+
+
+
