@@ -1,0 +1,41 @@
+> use school 
+> db.students.insertMany([
+... {name : "Ram" , age: 20 , branch : "Computer" , sgpa : 9.2 , marks : 85 , city : "Mumbai"},
+... {name:"Sita" , age : 21 , branch : "IT" , sgpa: 8.5 , marks : 78 , city: "Delhi"},
+... {name : "John" , age: 22, branch : "Electronics" , sgpa : 7.5 , marks : 82 , city : "Chennai"},
+... {name : "Ravi" , age: 20 , branch : "Computer" , sgpa : 9.0 , marks: 89 , city: "Mumbai"},
+... {name : "Asha" , age: 19 , branch : "Mechanical" , sgpa : 7.0 , marks : 75 ,city : "Mumbai"}
+... ])
+> db.students.find().pretty()
+> db.students.updateOne (
+... { name: "Ram" }, 
+... { $set: { marks: 95}}
+... )
+> db.students.find({ name: "Ram" }).pretty()
+> db.students.find({
+... $or : [ 
+... {sgpa : 9 },
+... {branch: "Computer" }
+... ]
+... }).pretty()
+> db.students.find({ branch: { $ne: "IT" } }).pretty()
+> db.students.find({ 
+... sgpa : 7 , 
+... city : "Mumbai"
+... }).pretty()
+> db.students.find({
+... $nor: [
+... { sgpa : 9 },
+... { branch: "Computer" }
+... ]
+... }).pretty()
+> db.students.save({
+... name: "Meera",
+... age: 20 , 
+... branch : "Civil",
+... sgpa : 8.0,
+... marks : 80 , 
+... city : "Pune" 
+... })
+> db.students.deleteOne({ name : "Sita" })
+> db.students.find({ branch : "Computer" }).sort({ sgpa: -1}).limit(1).pretty()
