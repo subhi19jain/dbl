@@ -1,0 +1,16 @@
+mysql> CREATE DATABASE CPP_demo;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> USE CPP_demo;
+Database changed
+mysql> CREATE TABLE users(
+    -> id INT AUTO_INCREMENT PRIMARY KEY,
+    -> name VARCHAR(100),
+    -> email VARCHAR(200));
+Query OK, 0 rows affected (0.33 sec)
+
+mysql>  tee rd;
+Logging to file 'rd'
+mysql> exit;
+Bye
+
