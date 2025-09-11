@@ -1,0 +1,360 @@
+use college;
+
+db.student2.insertMany([
+  {
+    roll_no: 101,
+    prn: "PRN001",
+    name: "Alice",
+    branch: "CSE",
+    marks: { TOC: 85, DBMS: 90, OS: 78 }
+  },
+  {
+    roll_no: 102,
+    prn: "PRN002",
+    name: "Bob",
+    branch: "IT",
+    marks: { TOC: 70, DBMS: 75, OS: 88 }
+  },
+  {
+    roll_no: 103,
+    prn: "PRN003",
+    name: "Charlie",
+    branch: "CSE",
+    marks: { TOC: 92, DBMS: 85, OS: 80 }
+  },
+  {
+    roll_no: 104,
+    prn: "PRN004",
+    name: "David",
+    branch: "IT",
+    marks: { TOC: 78, DBMS: 82, OS: 85 }
+  },
+  {
+    roll_no: 105,
+    prn: "PRN005",
+    name: "Eva",
+    branch: "ECE",
+    marks: { TOC: 88, DBMS: 76, OS: 90 }
+  },
+  {
+    roll_no: 106,
+    prn: "PRN006",
+    name: "Frank",
+    branch: "ECE",
+    marks: { TOC: 69, DBMS: 80, OS: 75 }
+  },
+  {
+    roll_no: 107,
+    prn: "PRN007",
+    name: "Grace",
+    branch: "MECH",
+    marks: { TOC: 95, DBMS: 88, OS: 92 }
+  },
+  {
+    roll_no: 108,
+    prn: "PRN008",
+    name: "Hank",
+    branch: "MECH",
+    marks: { TOC: 60, DBMS: 65, OS: 70 }
+  },
+  {
+    roll_no: 109,
+    prn: "PRN009",
+    name: "Ivy",
+    branch: "CSE",
+    marks: { TOC: 82, DBMS: 91, OS: 87 }
+  },
+  {
+    roll_no: 110,
+    prn: "PRN010",
+    name: "Jack",
+    branch: "IT",
+    marks: { TOC: 77, DBMS: 79, OS: 83 }
+  }
+]);
+
+db.student2.find().pretty();
+
+db.student2.aggregate([
+  {
+    $group: {
+      _id: "$branch",
+      total_students: { $sum: 1 }
+    }
+  }
+]);
+
+
+db.student2.aggregate([
+  {
+    $addFields: {
+      total_marks: {
+        $sum: ["$marks.TOC", "$marks.DBMS", "$marks.OS"]
+      }
+    }
+  },
+  { $sort: { branch: 1, total_marks: -1 } },
+  {
+    $group: {
+      _id: "$branch",
+      topper: { $first: "$$ROOT" }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      branch: "$_id",
+      topper_name: "$topper.name",
+      total_marks: "$topper.total_marks"
+    }
+  }
+]);
+
+
+db.student2.find().sort({ "marks.TOC": -1 }).limit(1);
+
+db.student2.find().sort({ "marks.DBMS": -1 }).limit(1);
+
+db.student2.find().sort({ "marks.OS": -1 }).limit(1);
+
+
+
+db.student2.aggregate([
+  {
+    $group: {
+      _id: null,
+      avg_TOC: { $avg: "$marks.TOC" },
+      avg_DBMS: { $avg: "$marks.DBMS" },
+      avg_OS: { $avg: "$marks.OS" }
+    }
+  }
+]);
+
+db.student2.find().sort({ "marks.TOC": 1 }).limit(1);
+
+db.student2.createIndex({ roll_no: 1 });
+db.student2.createIndex({ prn: 1 });
+
+db.student2.getIndexes();
+
+db.student2.dropIndex("roll_no_1");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+...1
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+		ObjectId("68c263ba20669705947c0f8f"),
+		ObjectId("68c263ba20669705947c0f90"),
+		ObjectId("68c263ba20669705947c0f91"),
+		ObjectId("68c263ba20669705947c0f92"),
+		ObjectId("68c263ba20669705947c0f93"),
+		ObjectId("68c263ba20669705947c0f94"),
+		ObjectId("68c263ba20669705947c0f95"),
+		ObjectId("68c263ba20669705947c0f96"),
+		ObjectId("68c263ba20669705947c0f97"),
+		ObjectId("68c263ba20669705947c0f98")
+	]
+}
+
+...2
+{
+	"_id" : ObjectId("68c263ba20669705947c0f8f"),
+	"roll_no" : 101,
+	"prn" : "PRN001",
+	"name" : "Alisha",
+	"branch" : "CSE",
+	"marks" : {
+		"TOC" : 85,
+		"DBMS" : 90,
+		"OS" : 78
+	}
+}
+{
+	"_id" : ObjectId("68c263ba20669705947c0f90"),
+	"roll_no" : 102,
+	"prn" : "PRN002",
+	"name" : "Bobby",
+	"branch" : "IT",
+	"marks" : {
+		"TOC" : 70,
+		"DBMS" : 75,
+		"OS" : 88
+	}
+}
+{
+	"_id" : ObjectId("68c263ba20669705947c0f91"),
+	"roll_no" : 103,
+	"prn" : "PRN003",
+	"name" : "Charlie",
+	"branch" : "CSE",
+	"marks" : {
+		"TOC" : 92,
+		"DBMS" : 85,
+		"OS" : 80
+	}
+}
+{
+	"_id" : ObjectId("68c263ba20669705947c0f92"),
+	"roll_no" : 104,
+	"prn" : "PRN004",
+	"name" : "David",
+	"branch" : "IT",
+	"marks" : {
+		"TOC" : 78,
+		"DBMS" : 82,
+		"OS" : 85
+	}
+}
+{
+	"_id" : ObjectId("68c263ba20669705947c0f93"),
+	"roll_no" : 105,
+	"prn" : "PRN005",
+	"name" : "Eva",
+	"branch" : "ECE",
+	"marks" : {
+		"TOC" : 88,
+		"DBMS" : 76,
+		"OS" : 90
+	}
+}
+{
+	"_id" : ObjectId("68c263ba20669705947c0f94"),
+	"roll_no" : 106,
+	"prn" : "PRN006",
+	"name" : "Frank",
+	"branch" : "ECE",
+	"marks" : {
+		"TOC" : 69,
+		"DBMS" : 80,
+		"OS" : 75
+	}
+}
+{
+	"_id" : ObjectId("68c263ba20669705947c0f95"),
+	"roll_no" : 107,
+	"prn" : "PRN007",
+	"name" : "Grace",
+	"branch" : "MECH",
+	"marks" : {
+		"TOC" : 95,
+		"DBMS" : 88,
+		"OS" : 92
+	}
+}
+{
+	"_id" : ObjectId("68c263ba20669705947c0f96"),
+	"roll_no" : 108,
+	"prn" : "PRN008",
+	"name" : "Hank",
+	"branch" : "MECH",
+	"marks" : {
+		"TOC" : 60,
+		"DBMS" : 65,
+		"OS" : 70
+	}
+}
+{
+	"_id" : ObjectId("68c263ba20669705947c0f97"),
+	"roll_no" : 109,
+	"prn" : "PRN009",
+	"name" : "Ivy",
+	"branch" : "CSE",
+	"marks" : {
+		"TOC" : 82,
+		"DBMS" : 91,
+		"OS" : 87
+	}
+}
+{
+	"_id" : ObjectId("68c263ba20669705947c0f98"),
+	"roll_no" : 110,
+	"prn" : "PRN010",
+	"name" : "Jack",
+	"branch" : "IT",
+	"marks" : {
+		"TOC" : 77,
+		"DBMS" : 79,
+		"OS" : 83
+	}
+}
+
+...3
+{ "_id" : "ECE", "total_students" : 2 }
+{ "_id" : "MECH", "total_students" : 2 }
+{ "_id" : "IT", "total_students" : 3 }
+{ "_id" : "CSE", "total_students" : 3 }
+
+
+...4
+{ "branch" : "ECE", "topper_name" : "Eva", "total_marks" : 254 }
+{ "branch" : "MECH", "topper_name" : "Grace", "total_marks" : 275 }
+{ "branch" : "IT", "topper_name" : "David", "total_marks" : 245 }
+{ "branch" : "CSE", "topper_name" : "Ivy", "total_marks" : 260 }
+
+
+...5
+{ "_id" : ObjectId("68bfd6b035557644655e6b91"), "roll_no" : 107, "prn" : "PRN007", "name" : "Grace", "branch" : "MECH", "marks" : { "TOC" : 95, "DBMS" : 88, "OS" : 92 } }
+
+{ "_id" : ObjectId("68bfd6b035557644655e6b93"), "roll_no" : 109, "prn" : "PRN009", "name" : "Ivy", "branch" : "CSE", "marks" : { "TOC" : 82, "DBMS" : 91, "OS" : 87 } }
+
+{ "_id" : ObjectId("68bfd6b035557644655e6b91"), "roll_no" : 107, "prn" : "PRN007", "name" : "Grace", "branch" : "MECH", "marks" : { "TOC" : 95, "DBMS" : 88, "OS" : 92 } }
+
+...6
+{ "_id" : null, "avg_TOC" : 79.6, "avg_DBMS" : 81.1, "avg_OS" : 82.8 }
+
+...7
+{ "_id" : ObjectId("68bfd6b035557644655e6b92"), "roll_no" : 108, "prn" : "PRN008", "name" : "Hank", "branch" : "MECH", "marks" : { "TOC" : 60, "DBMS" : 65, "OS" : 70 } }
+
+...8
+{
+	"createdCollectionAutomatically" : false,
+	"numIndexesBefore" : 1,
+	"numIndexesAfter" : 2,
+	"ok" : 1
+}
+
+{
+	"createdCollectionAutomatically" : false,
+	"numIndexesBefore" : 2,
+	"numIndexesAfter" : 3,
+	"ok" : 1
+}
+
+...9
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "college.student"
+	}
+]
+
+...10
+{
+	"nIndexesWas" : 1,
+	"ok" : 0,
+	"errmsg" : "index not found with name [roll_no_1]",
+	"code" : 27,
+	"codeName" : "IndexNotFound"
+}
+
