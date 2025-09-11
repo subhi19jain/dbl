@@ -1,0 +1,143 @@
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <mysql_driver.h>
+#include <mysql_connection.h>
+#include <cppconn/statement.h>
+#include <cppconn/prepared_statement.h>
+#include <cppconn/resultset.h>
+
+using namespace std;
+using namespace sql;
+
+void addUser(Connection* con, const string& name, const string& email) {
+    PreparedStatement* pstmt = con->prepareStatement("INSERT INTO users(name, email) VALUES(?, ?)");
+    pstmt->setString(1, name);
+    pstmt->setString(2, email);
+    pstmt->execute();
+    delete pstmt;
+    cout << "User added successfully.\n";
+}
+
+void deleteUser(Connection* con, int id) {
+    PreparedStatement* pstmt = con->prepareStatement("DELETE FROM users WHERE id = ?");
+    pstmt->setInt(1, id);
+    int rows = pstmt->executeUpdate();
+    delete pstmt;
+    if (rows > 0)
+        cout << "User deleted successfully.\n";
+    else
+        cout << "User not found.\n";
+}
+
+void editUser(Connection* con, int id, const string& name, const string& email) {
+    PreparedStatement* pstmt = con->prepareStatement("UPDATE users SET name = ?, email = ? WHERE id = ?");
+    pstmt->setString(1, name);
+    pstmt->setString(2, email);
+    pstmt->setInt(3, id);
+    int rows = pstmt->executeUpdate();
+    delete pstmt;
+    if (rows > 0)
+        cout << "User updated successfully.\n";
+    else
+        cout << "User not found.\n";
+}
+
+void viewUsers(Connection* con) {
+    Statement* stmt = con->createStatement();
+    ResultSet* res = stmt->executeQuery("SELECT * FROM users");
+
+    cout << "\nID\tName\tEmail\n";
+    while (res->next()) {
+        cout << res->getInt("id") << "\t"
+             << res->getString("name") << "\t"
+             << res->getString("email") << endl;
+    }
+
+    delete res;
+    delete stmt;
+}
+
+int main() {
+    try {
+        sql::mysql::MySQL_Driver* driver;
+        sql::Connection* con;
+
+        // Connect to the database
+        driver = sql::mysql::get_mysql_driver_instance();
+        con = driver->connect("tcp://127.0.0.1:3306", "subhi", "CSL4123");
+
+        // Connect to specific DB
+        con->setSchema("CPP_demo");
+
+        int choice;
+        do {
+            cout << "\nMenu:\n1. Add User\n2. Delete User\n3. Edit User\n4. View Users\n5. Exit\nEnter choice: ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1: {
+                    string name, email;
+                    cout << "Enter name: ";
+                    cin.ignore();
+                    getline(cin, name);
+                    cout << "Enter email: ";
+                    getline(cin, email);
+                    addUser(con, name, email);
+                    break;
+                }
+                case 2: {
+                    int id;
+                    cout << "Enter user ID to delete: ";
+                    cin >> id;
+                    deleteUser(con, id);
+                    break;
+                }
+                case 3: {
+                    int id;
+                    string name, email;
+                    cout << "Enter user ID to edit: ";
+                    cin >> id;
+                    cin.ignore();
+                    cout << "Enter new name: ";
+                    getline(cin, name);
+                    cout << "Enter new email: ";
+                    getline(cin, email);
+                    editUser(con, id, name, email);
+                    break;
+                }
+                case 4:
+                    viewUsers(con);
+                    break;
+                case 5:
+                    cout << "Exiting...\n";
+                    break;
+                default:
+                    cout << "Invalid choice.\n";
+            }
+
+        } while (choice != 5);
+
+        delete con;
+
+    } catch (SQLException& e) {
+        cerr << "SQL Error: " << e.what() << endl;
+        return 1;
+    } catch (exception& e) {
+        cerr << "Error: " << e.what() << endl;
+        return 1;
+    }
+
+    return 0;
+}
+
+
+mysql> CREATE DATABASE CPP_demo;
+
+mysql> USE CPP_demo;
+mysql> CREATE TABLE users(
+   id INT AUTO_INCREMENT PRIMARY KEY,
+   name VARCHAR(100),
+   email VARCHAR(200));
+
+

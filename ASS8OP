@@ -1,0 +1,90 @@
+Menu:
+1. Add User
+2. Delete User
+3. Edit User
+4. View Users
+5. Exit
+Enter choice: 1
+Enter name: adi
+Enter email: adi@gmail.com
+User added successfully.
+
+Menu:
+1. Add User
+2. Delete User
+3. Edit User
+4. View Users
+5. Exit
+Enter choice: 1
+Enter name: bobyy
+Enter email: bobyy@gmail.com
+User added successfully.
+
+Menu:
+1. Add User
+2. Delete User
+3. Edit User
+4. View Users
+5. Exit
+Enter choice: 1
+Enter name: charvi
+Enter email: charvi@gmail.com
+User added successfully.
+
+Menu:
+1. Add User
+2. Delete User
+3. Edit User
+4. View Users
+5. Exit
+Enter choice: 1
+Enter name: dravid
+Enter email: dravid@gmail.com
+User added successfully.
+
+Menu:
+1. Add User
+2. Delete User
+3. Edit User
+4. View Users
+5. Exit
+Enter choice: 4
+
+ID      Name    Email
+1       Ashwani ashwani26@gmail.com
+2       Darshan darshan01@gmail.com
+3       adi     adi@gmail.com
+4       bobyy   bobyy@gmail.com
+5       charvi  charvi@gmail.com
+6       dravid  dravid@gmail.com
+
+Menu:
+1. Add User
+2. Delete User
+3. Edit User
+4. View Users
+5. Exit
+Enter choice: 3
+Enter user ID to edit: 3
+Enter new name: aaditya
+Enter new email: aaditya@gmail.com
+User updated successfully.
+
+Menu:
+1. Add User
+2. Delete User
+3. Edit User
+4. View Users
+5. Exit
+Enter choice: 2
+Enter user ID to delete: 5
+User deleted successfully.
+
+Menu:
+1. Add User
+2. Delete User
+3. Edit User
+4. View Users
+5. Exit
+Enter choice: 5
+Exiting...

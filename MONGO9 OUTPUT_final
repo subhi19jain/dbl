@@ -1,0 +1,294 @@
+...1 create 
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+		ObjectId("68b6906ac890955c0c7e6c63"),
+		ObjectId("68b6906ac890955c0c7e6c64"),
+		ObjectId("68b6906ac890955c0c7e6c65"),
+		ObjectId("68b6906ac890955c0c7e6c66"),
+		ObjectId("68b6906ac890955c0c7e6c67")
+	]
+}
+
+...2 all students 
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c63"),
+	"name" : "Ram",
+	"age" : 20,
+	"branch" : "Computer",
+	"sgpa" : 9.2,
+	"marks" : 85,
+	"city" : "Mumbai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c64"),
+	"name" : "Sita",
+	"age" : 21,
+	"branch" : "IT",
+	"sgpa" : 8.5,
+	"marks" : 78,
+	"city" : "Delhi"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c65"),
+	"name" : "John",
+	"age" : 22,
+	"branch" : "Electronics",
+	"sgpa" : 7.5,
+	"marks" : 82,
+	"city" : "Chennai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c66"),
+	"name" : "Ravi",
+	"age" : 20,
+	"branch" : "Computer",
+	"sgpa" : 9,
+	"marks" : 89,
+	"city" : "Mumbai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c67"),
+	"name" : "Asha",
+	"age" : 19,
+	"branch" : "Mechanical",
+	"sgpa" : 7,
+	"marks" : 75,
+	"city" : "Mumbai"
+}
+
+...3 update ram marks to 95
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+> db.students.find({ name: "Ram" }).pretty()
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c63"),
+	"name" : "Ram",
+	"age" : 20,
+	"branch" : "Computer",
+	"sgpa" : 9.2,
+	"marks" : 95,
+	"city" : "Mumbai"
+}
+
+...4 sgpa 9 or computer 
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c63"),
+	"name" : "Ram",
+	"age" : 20,
+	"branch" : "Computer",
+	"sgpa" : 9.2,
+	"marks" : 85,
+	"city" : "Mumbai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c66"),
+	"name" : "Ravi",
+	"age" : 20,
+	"branch" : "Computer",
+	"sgpa" : 9,
+	"marks" : 89,
+	"city" : "Mumbai"
+}
+
+...5 branch not IT 
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c63"),
+	"name" : "Ram",
+	"age" : 20,
+	"branch" : "Computer",
+	"sgpa" : 9.2,
+	"marks" : 95,
+	"city" : "Mumbai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c65"),
+	"name" : "John",
+	"age" : 22,
+	"branch" : "Electronics",
+	"sgpa" : 7.5,
+	"marks" : 82,
+	"city" : "Chennai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c66"),
+	"name" : "Ravi",
+	"age" : 20,
+	"branch" : "Computer",
+	"sgpa" : 9,
+	"marks" : 89,
+	"city" : "Mumbai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c67"),
+	"name" : "Asha",
+	"age" : 19,
+	"branch" : "Mechanical",
+	"sgpa" : 7,
+	"marks" : 75,
+	"city" : "Mumbai"
+}
+{
+	"_id" : ObjectId("68b69560c890955c0c7e6c68"),
+	"name" : "Meera",
+	"age" : 20,
+	"branch" : "Civil",
+	"sgpa" : 8,
+	"marks" : 80,
+	"city" : "Pune"
+}
+
+...6 city mumbai 
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c67"),
+	"name" : "Asha",
+	"age" : 19,
+	"branch" : "Mechanical",
+	"sgpa" : 7,
+	"marks" : 75,
+	"city" : "Mumbai"
+}
+
+...7 not computer and not 9 
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c64"),
+	"name" : "Sita",
+	"age" : 21,
+	"branch" : "IT",
+	"sgpa" : 8.5,
+	"marks" : 78,
+	"city" : "Delhi"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c65"),
+	"name" : "John",
+	"age" : 22,
+	"branch" : "Electronics",
+	"sgpa" : 7.5,
+	"marks" : 82,
+	"city" : "Chennai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c67"),
+	"name" : "Asha",
+	"age" : 19,
+	"branch" : "Mechanical",
+	"sgpa" : 7,
+	"marks" : 75,
+	"city" : "Mumbai"
+}
+
+...8 add new
+> db.students.find().pretty()
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c63"),
+	"name" : "Ram",
+	"age" : 20,
+	"branch" : "Computer",
+	"sgpa" : 9.2,
+	"marks" : 95,
+	"city" : "Mumbai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c64"),
+	"name" : "Sita",
+	"age" : 21,
+	"branch" : "IT",
+	"sgpa" : 8.5,
+	"marks" : 78,
+	"city" : "Delhi"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c65"),
+	"name" : "John",
+	"age" : 22,
+	"branch" : "Electronics",
+	"sgpa" : 7.5,
+	"marks" : 82,
+	"city" : "Chennai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c66"),
+	"name" : "Ravi",
+	"age" : 20,
+	"branch" : "Computer",
+	"sgpa" : 9,
+	"marks" : 89,
+	"city" : "Mumbai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c67"),
+	"name" : "Asha",
+	"age" : 19,
+	"branch" : "Mechanical",
+	"sgpa" : 7,
+	"marks" : 75,
+	"city" : "Mumbai"
+}
+{
+	"_id" : ObjectId("68b69560c890955c0c7e6c68"),
+	"name" : "Meera",
+	"age" : 20,
+	"branch" : "Civil",
+	"sgpa" : 8,
+	"marks" : 80,
+	"city" : "Pune"
+}
+
+...9 delete
+{ "acknowledged" : true, "deletedCount" : 1 }
+> db.students.find().pretty()
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c63"),
+	"name" : "Ram",
+	"age" : 20,
+	"branch" : "Computer",
+	"sgpa" : 9.2,
+	"marks" : 95,
+	"city" : "Mumbai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c65"),
+	"name" : "John",
+	"age" : 22,
+	"branch" : "Electronics",
+	"sgpa" : 7.5,
+	"marks" : 82,
+	"city" : "Chennai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c66"),
+	"name" : "Ravi",
+	"age" : 20,
+	"branch" : "Computer",
+	"sgpa" : 9,
+	"marks" : 89,
+	"city" : "Mumbai"
+}
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c67"),
+	"name" : "Asha",
+	"age" : 19,
+	"branch" : "Mechanical",
+	"sgpa" : 7,
+	"marks" : 75,
+	"city" : "Mumbai"
+}
+{
+	"_id" : ObjectId("68b69560c890955c0c7e6c68"),
+	"name" : "Meera",
+	"age" : 20,
+	"branch" : "Civil",
+	"sgpa" : 8,
+	"marks" : 80,
+	"city" : "Pune"
+}
+...10 highest 
+{
+	"_id" : ObjectId("68b6906ac890955c0c7e6c63"),
+	"name" : "Ram",
+	"age" : 20,
+	"branch" : "Computer",
+	"sgpa" : 9.2,
+	"marks" : 95,
+	"city" : "Mumbai"
+}
