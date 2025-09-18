@@ -1,0 +1,322 @@
+> use employee_company ;
+...
+db.employee2.insertOne({
+  name: "Ram",
+  department: "IT",
+  salary: 50000,
+  address: "Pune",
+  dependents: ["Rita", "Sita"]
+})
+...
+db.employee2.insertMany([
+  {
+    name: "Leena",
+    department: "Mechanical Engineering",
+    salary: 55000,
+    address: "Mumbai",
+    dependents: ["Tom"]
+  },
+  {
+    name: "Amit",
+    department: "IT",
+    salary: 60000,
+    address: "Delhi",
+    dependents: []
+  },
+  {
+    name: "Sunil",
+    department: "Mechanical Engineering",
+    salary: 70000,
+    address: "Nagpur",
+    dependents: ["Anil", "Sunita", "Mira"]
+  },
+  {
+    name: "Rohit",
+    department: "HR",
+    salary: 48000,
+    address: "Bangalore",
+    dependents: ["Meera"]
+  }
+])
+
+...
+db.employee2.find().pretty()
+...
+> db.employee2.find({ department: "IT"}).forEach(function(emp){
+ var newSalary = emp.salary * 1.10;
+ db.employee2.updateOne(
+{_id: emp._id},
+ { $set:{salary : newSalary }}
+ );
+});
+> db.employee2.find().pretty()
+
+...
+db.employee2.updateOne(
+  { name: "Ram" },
+  { $set: { address: "Hyderabad" } }
+)
+...
+db.employee2.deleteOne({ name: "Leena" })
+...
+db.employee2.find({ department: "Mechanical Engineering" })
+           .sort({ salary: -1 })
+           .limit(1)
+... ...
+var mapFunction = function() {
+  emit(this.name, this.dependents.length);
+};
+...
+var reduceFunction = function(key, values) {
+  return Array.sum(values);
+};
+...
+db.employee2.mapReduce(
+  mapFunction,
+  reduceFunction,
+  { out: "dependent_counts" }
+)
+...
+ db.dependent_counts.find().pretty()
+... ...
+
+> db.employee2.find().count()
+
+
+
+
+
+
+
+
+
+output 
+
+...
+{
+	"_id" : ObjectId("694adb5f21fe1899e9c6ffad"),
+	"name" : "Ram",
+	"department" : "IT",
+	"salary" : 50000,
+	"address" : "Pune",
+	"dependents" : [
+		"Rita",
+		"Sita"
+	]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffae"),
+	"name" : "Leena",
+	"department" : "Mechanical Engineering",
+	"salary" : 55000,
+	"address" : "Mumbai",
+	"dependents" : [
+		"Tom"
+	]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffaf"),
+	"name" : "Amit",
+	"department" : "IT",
+	"salary" : 60000,
+	"address" : "Delhi",
+	"dependents" : [ ]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffb0"),
+	"name" : "Sunil",
+	"department" : "Mechanical Engineering",
+	"salary" : 70000,
+	"address" : "Nagpur",
+	"dependents" : [
+		"Anil",
+		"Sunita",
+		"Mira"
+	]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffb1"),
+	"name" : "Rohit",
+	"department" : "HR",
+	"salary" : 48000,
+	"address" : "Bangalore",
+	"dependents" : [
+		"Meera"
+	]
+}
+
+
+
+...
+{
+	"_id" : ObjectId("694adb5f21fe1899e9c6ffad"),
+	"name" : "Ram",
+	"department" : "IT",
+	"salary" : 73205.00000000003,
+	"address" : "Pune",
+	"dependents" : [
+		"Rita",
+		"Sita"
+	]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffae"),
+	"name" : "Leena",
+	"department" : "Mechanical Engineering",
+	"salary" : 55000,
+	"address" : "Mumbai",
+	"dependents" : [
+		"Tom"
+	]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffaf"),
+	"name" : "Amit",
+	"department" : "IT",
+	"salary" : 87846,
+	"address" : "Delhi",
+	"dependents" : [ ]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffb0"),
+	"name" : "Sunil",
+	"department" : "Mechanical Engineering",
+	"salary" : 70000,
+	"address" : "Nagpur",
+	"dependents" : [
+		"Anil",
+		"Sunita",
+		"Mira"
+	]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffb1"),
+	"name" : "Rohit",
+	"department" : "HR",
+	"salary" : 48000,
+	"address" : "Bangalore",
+	"dependents" : [
+		"Meera"
+	]
+}
+> 
+...
+{
+	"_id" : ObjectId("694adb5f21fe1899e9c6ffad"),
+	"name" : "Ram",
+	"department" : "IT",
+	"salary" : 73205.00000000003,
+	"address" : "Pune",
+	"dependents" : [
+		"Rita",
+		"Sita"
+	]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffae"),
+	"name" : "Leena",
+	"department" : "Mechanical Engineering",
+	"salary" : 55000,
+	"address" : "Mumbai",
+	"dependents" : [
+		"Tom"
+	]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffaf"),
+	"name" : "Amit",
+	"department" : "IT",
+	"salary" : 87846,
+	"address" : "Delhi",
+	"dependents" : [ ]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffb0"),
+	"name" : "Sunil",
+	"department" : "Mechanical Engineering",
+	"salary" : 70000,
+	"address" : "Nagpur",
+	"dependents" : [
+		"Anil",
+		"Sunita",
+		"Mira"
+	]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffb1"),
+	"name" : "Rohit",
+	"department" : "HR",
+	"salary" : 48000,
+	"address" : "Bangalore",
+	"dependents" : [
+		"Meera"
+	]
+}
+
+
+...
+{
+	"_id" : ObjectId("694adb5f21fe1899e9c6ffad"),
+	"name" : "Ram",
+	"department" : "IT",
+	"salary" : 73205.00000000003,
+	"address" : "Hyderabad",
+	"dependents" : [
+		"Rita",
+		"Sita"
+	]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffaf"),
+	"name" : "Amit",
+	"department" : "IT",
+	"salary" : 87846,
+	"address" : "Delhi",
+	"dependents" : [ ]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffb0"),
+	"name" : "Sunil",
+	"department" : "Mechanical Engineering",
+	"salary" : 70000,
+	"address" : "Nagpur",
+	"dependents" : [
+		"Anil",
+		"Sunita",
+		"Mira"
+	]
+}
+{
+	"_id" : ObjectId("694adb9f21fe1899e9c6ffb1"),
+	"name" : "Rohit",
+	"department" : "HR",
+	"salary" : 48000,
+	"address" : "Bangalore",
+	"dependents" : [
+		"Meera"
+	]
+}
+
+...
+{ "_id" : ObjectId("694adb9f21fe1899e9c6ffb0"), "name" : "Sunil", "department" : "Mechanical Engineering", "salary" : 70000, "address" : "Nagpur", "dependents" : [ "Anil", "Sunita", "Mira" ] }
+> 
+...
+{
+	"result" : "dependent_counts",
+	"timeMillis" : 525,
+	"counts" : {
+		"input" : 4,
+		"emit" : 4,
+		"reduce" : 0,
+		"output" : 4
+	},
+	"ok" : 1
+}
+...
+{ "_id" : "Amit", "value" : 0 }
+{ "_id" : "Ram", "value" : 2 }
+{ "_id" : "Rohit", "value" : 1 }
+{ "_id" : "Sunil", "value" : 3 }
+...
+4
+
